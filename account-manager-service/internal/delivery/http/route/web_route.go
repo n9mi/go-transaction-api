@@ -19,4 +19,5 @@ func (c *RouteConfig) Setup() {
 func (c *RouteConfig) SetupAuthRoute(route *gin.RouterGroup) {
 	authRoute := route.Group("/auth")
 	authRoute.POST("/sign-up", c.ControllerSetup.AuthController.SignUp)
+	authRoute.POST("/sign-in", c.ControllerSetup.AuthController.SignIn)
 }

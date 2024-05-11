@@ -7,4 +7,5 @@ import (
 
 type AuthService interface {
 	SignUp(ctx context.Context, request *model.SignUpRequest) error
+	SignIn(ctx context.Context, request *model.SignInRequest) (*model.TokenResponse, error)
 }

@@ -8,6 +8,7 @@ import (
 	"account-manager-service/internal/util"
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -94,4 +95,49 @@ func (s *AuthServiceImpl) SignUp(ctx context.Context, request *model.SignUpReque
 	}
 
 	return nil
+}
+
+func (s *AuthServiceImpl) SignIn(ctx context.Context, request *model.SignInRequest) (*model.TokenResponse, error) {
+	if err := s.Validate.Struct(request); err != nil {
+		s.Log.Warnf("[%d] invalid request body : %+v", http.StatusBadRequest, err)
+		return nil, err
+	}
+
+	tx := s.DB.WithContext(ctx).Begin()
+
+	user := new(entity.User)
+	user.Email = request.Email
+	if err := s.UserRepository.FindByEmail(tx, user); err != nil || len(user.ID) == 0 {
+		s.Log.Warnf("[%d] user not found", http.StatusUnauthorized)
+		return nil, exception.NewHttpError(http.StatusUnauthorized, "user not found")
+	}
+
+	if !util.CompareHashAndPassword(user.Password, request.Password) {
+		s.Log.Warnf("[%d] user not found", http.StatusUnauthorized)
+		return nil, exception.NewHttpError(http.StatusUnauthorized, "user not found")
+	}
+
+	var (
+		response        model.TokenResponse
+		accessExpAtUnix int64
+		err             error
+	)
+	response.AccessToken, accessExpAtUnix, err = util.GenerateAccessToken(s.ViperConfig, &model.AuthData{
+		UserID: user.ID,
+		Email:  user.Email,
+	})
+	if err != nil {
+		s.Log.Warnf("[%d] failed to generate access token : %+v", http.StatusInternalServerError, err)
+		return nil, exception.NewHttpError(http.StatusInternalServerError, "something wrong")
+	}
+
+	// Store token to redis
+	accessTokenExpDur := time.Duration((accessExpAtUnix - time.Now().Unix()) * int64(time.Second))
+	if err := s.RedisClient.SetEx(ctx, util.GetAccessTokenRedisKey(user.ID), response.AccessToken, accessTokenExpDur).
+		Err(); err != nil {
+		s.Log.Warnf("[%d] failed to store access token to redis : %+v", http.StatusInternalServerError, err)
+		return nil, exception.NewHttpError(http.StatusInternalServerError, "something wrong")
+	}
+
+	return &response, nil
 }

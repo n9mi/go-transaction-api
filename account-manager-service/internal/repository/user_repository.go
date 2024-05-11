@@ -32,3 +32,7 @@ func (r *UserRepository) ExistByPhoneNumber(tx *gorm.DB, phoneNumber string) (bo
 
 	return exist, err
 }
+
+func (r *UserRepository) FindByEmail(tx *gorm.DB, user *entity.User) error {
+	return tx.First(user, "email = ?", strings.ToLower(user.Email)).Error
+}
