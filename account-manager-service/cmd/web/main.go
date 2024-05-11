@@ -6,22 +6,24 @@ import (
 )
 
 func main() {
-	viperConfig := config.NewViper()
-	logger := config.NewLogger(viperConfig)
-	db := config.NewDatabase(viperConfig, logger)
-	app := config.NewGin(viperConfig)
-	validate := config.NewValidate(viperConfig)
+	viperCfg := config.NewViper()
+	logger := config.NewLogger(viperCfg)
+	db := config.NewDatabase(viperCfg, logger)
+	app := config.NewGin(viperCfg)
+	validate := config.NewValidate(viperCfg)
+	redisClient := config.NewRedisClient(viperCfg)
 
 	cfg := &config.ConfigBootstrap{
-		ViperConfig: viperConfig,
-		Logger:      logger,
+		ViperConfig: viperCfg,
+		Log:         logger,
 		DB:          db,
 		App:         app,
 		Validate:    validate,
+		RedisClient: redisClient,
 	}
 	config.Bootstrap(cfg)
 
-	appPort := viperConfig.GetInt("APP_PORT")
+	appPort := viperCfg.GetInt("APP_PORT")
 	if err := app.Run(fmt.Sprintf(":%d", appPort)); err != nil {
 		logger.Fatalf("[ERROR] Failed to start Gin server : " + err.Error())
 	}

@@ -12,8 +12,8 @@ type User struct {
 
 	Password string
 
-	Phone string
-	Email string
+	PhoneNumber string
+	Email       string
 
 	CreatedAt time.Time
 	UpdatedAt *time.Time

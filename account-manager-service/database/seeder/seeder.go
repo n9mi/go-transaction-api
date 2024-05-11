@@ -48,12 +48,12 @@ func seedUsers(db *gorm.DB, userRepository *repository.UserRepository) ([]entity
 	for i := 1; i <= numUsers; i++ {
 		newPassword, _ := util.GenerateFromPassword("password")
 		newUser := entity.User{
-			ID:        uuid.NewString(),
-			FirstName: "User",
-			LastName:  strconv.Itoa(i),
-			Password:  newPassword,
-			Phone:     strconv.Itoa(i * 10000000),
-			Email:     fmt.Sprintf("user%d@example.com", i),
+			ID:          uuid.NewString(),
+			FirstName:   "User",
+			LastName:    strconv.Itoa(i),
+			Password:    newPassword,
+			PhoneNumber: "+" + strconv.Itoa(i*10000000),
+			Email:       fmt.Sprintf("user%d@example.com", i),
 		}
 		tx := db.Begin()
 		if err := userRepository.Repository.Create(tx, &newUser); err != nil {
