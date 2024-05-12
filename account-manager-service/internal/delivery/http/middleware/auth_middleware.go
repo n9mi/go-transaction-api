@@ -15,12 +15,14 @@ func AuthMiddleware(viperCfg *viper.Viper, redisClient *redis.Client, log *logru
 		if err != nil {
 			c.Error(err)
 			c.Abort()
+			return
 		}
 
 		authData, err := util.VerifyAccessToken(c.Request.Context(), viperCfg, redisClient, log, accessToken)
 		if err != nil {
 			c.Error(err)
 			c.Abort()
+			return
 		}
 
 		c.Set("authData", *authData)

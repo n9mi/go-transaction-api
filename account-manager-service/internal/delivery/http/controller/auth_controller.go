@@ -23,11 +23,13 @@ func (ct *AuthController) SignUp(c *gin.Context) {
 	var request model.SignUpRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(exception.NewHttpError(http.StatusBadRequest, "invalid request"))
+		c.Abort()
 		return
 	}
 
 	if err := ct.AuthService.SignUp(c.Request.Context(), &request); err != nil {
 		c.Error(err)
+		c.Abort()
 		return
 	}
 
@@ -38,11 +40,14 @@ func (ct *AuthController) SignIn(c *gin.Context) {
 	var request model.SignInRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(exception.NewHttpError(http.StatusBadRequest, "invalid request"))
+		c.Abort()
+		return
 	}
 
 	response, err := ct.AuthService.SignIn(c.Request.Context(), &request)
 	if err != nil {
 		c.Error(err)
+		c.Abort()
 		return
 	}
 

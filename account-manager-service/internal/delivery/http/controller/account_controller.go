@@ -4,7 +4,6 @@ import (
 	"account-manager-service/internal/delivery/http/exception"
 	"account-manager-service/internal/model"
 	"account-manager-service/internal/service"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -28,6 +27,7 @@ func (ct *AccountController) GetAccounts(c *gin.Context) {
 	if !ok {
 		c.Error(exception.NewHttpError(http.StatusForbidden, "invalid authorization data"))
 		c.Abort()
+		return
 	}
 	request := &model.GetUserAccountsRequest{
 		Page:          page,
@@ -35,11 +35,12 @@ func (ct *AccountController) GetAccounts(c *gin.Context) {
 		UserID:        authData.UserID,
 		AccountTypeID: c.DefaultQuery("accountTypeId", ""),
 	}
-	fmt.Println(request)
+
 	data, err := ct.AccountService.FindAccounts(c.Request.Context(), request)
 	if err != nil {
 		c.Error(err)
 		c.Abort()
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

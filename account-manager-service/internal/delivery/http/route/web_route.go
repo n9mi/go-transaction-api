@@ -17,6 +17,7 @@ func (c *RouteConfig) Setup() {
 	route := c.App.Group("/api/v1")
 	c.SetupAuthRoute(route)
 	c.SetupAccountRoute(route)
+	c.SetupTransactionRoute(route)
 }
 
 func (c *RouteConfig) SetupAuthRoute(route *gin.RouterGroup) {
@@ -29,4 +30,10 @@ func (c *RouteConfig) SetupAccountRoute(route *gin.RouterGroup) {
 	accountRoute := route.Group("/accounts")
 	accountRoute.Use(c.MiddlewareSetup.AuthMiddleware)
 	accountRoute.GET("", c.ControllerSetup.AccountController.GetAccounts)
+}
+
+func (c *RouteConfig) SetupTransactionRoute(route *gin.RouterGroup) {
+	accountRoute := route.Group("/transactions")
+	accountRoute.Use(c.MiddlewareSetup.AuthMiddleware)
+	accountRoute.GET("", c.ControllerSetup.TransactionController.GetTransactions)
 }

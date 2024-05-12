@@ -24,12 +24,11 @@ func (r *AccountRepository) FindByUserID(tx *gorm.DB, request *model.GetUserAcco
 	}
 
 	tx = tx.Select("number", "balance_idr", "accounts.account_type_id", "accounts.created_at", "accounts.updated_at")
-	if request.AccountTypeID != "" {
-		tx = tx.Joins("AccountType", tx.Where(&entity.AccountType{ID: request.AccountTypeID}))
-	} else {
-		tx = tx.Joins("AccountType")
+	tx = tx.Joins("AccountType").Where("user_id = ?", request.UserID).Find(&accounts)
+
+	if len(request.AccountTypeID) > 0 {
+		tx = tx.Where("accounts.account_type_id = ?", request.AccountTypeID)
 	}
-	tx = tx.Where("user_id = ?", request.UserID).Find(&accounts)
 
 	return accounts, tx.Error
 }

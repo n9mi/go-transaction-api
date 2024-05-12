@@ -10,21 +10,19 @@ import (
 )
 
 type AccountServiceImpl struct {
-	DB                    *gorm.DB
-	Log                   *logrus.Logger
-	UserRepository        *repository.UserRepository
-	AccountRepository     *repository.AccountRepository
-	TransactionRepository *repository.TransactionRepository
+	DB                *gorm.DB
+	Log               *logrus.Logger
+	UserRepository    *repository.UserRepository
+	AccountRepository *repository.AccountRepository
 }
 
 func NewAccountService(db *gorm.DB, log *logrus.Logger, userRepository *repository.UserRepository,
-	accountRepository *repository.AccountRepository, transactionRepository *repository.TransactionRepository) AccountService {
+	accountRepository *repository.AccountRepository) AccountService {
 	return &AccountServiceImpl{
-		DB:                    db,
-		Log:                   log,
-		UserRepository:        userRepository,
-		AccountRepository:     accountRepository,
-		TransactionRepository: transactionRepository,
+		DB:                db,
+		Log:               log,
+		UserRepository:    userRepository,
+		AccountRepository: accountRepository,
 	}
 }
 

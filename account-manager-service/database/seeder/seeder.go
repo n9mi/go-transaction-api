@@ -151,7 +151,7 @@ func seedTransaction(db *gorm.DB, transactionRepository *repository.TransactionR
 	var transactions []entity.Transaction
 
 	for _, senderAcc := range accounts {
-		numOfTransactions := util.GetRandomNumberBetween(0, 5)
+		numOfTransactions := util.GetRandomNumberBetween(1, 5)
 
 		for i := 0; i < numOfTransactions; i++ {
 			var recipientAcc entity.Account
@@ -172,11 +172,11 @@ func seedTransaction(db *gorm.DB, transactionRepository *repository.TransactionR
 			newTransaction.IDRAmount = float64(util.GetRandomNumberBetween(10000, 40000))
 			newTransaction.OriginalAmount = newTransaction.IDRAmount * currencyUsed.CurrentPer1IDR
 			if isTransactionFailed {
-				newTransaction.Status = 0
+				newTransaction.Status = 2 // FAILED
 				failedAt := time.Now().Add(30 * time.Second)
 				newTransaction.FailedAt = &failedAt
 			} else {
-				newTransaction.Status = 2
+				newTransaction.Status = 3 // SUCCESS
 				succeedAt := time.Now().Add(30 * time.Second)
 				newTransaction.SucceedAt = &succeedAt
 			}
