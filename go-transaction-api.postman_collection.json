@@ -1,0 +1,276 @@
+{
+	"info": {
+		"_postman_id": "c985b864-e5a3-4e6f-b83a-2f59708f8940",
+		"name": "go-transaction-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32867185"
+	},
+	"item": [
+		{
+			"name": "[AUTH] Sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"a\",\n    \"last_name\": \"b\",\n    \"password\": \"password\",\n    \"phone_number\": \"+6281391617814\",\n    \"email\": \"ab@example.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/v1/auth/sign-up",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[AUTH] Sign in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user2@example.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/v1/auth/sign-in",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Account service] get all accounts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/api/v1/accounts?page=1&accountTypeId=a9011e65-2fd3-46b4-9d24-8a601253c41e",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"accounts"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "accountTypeId",
+							"value": "a9011e65-2fd3-46b4-9d24-8a601253c41e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Account service] get all transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/api/v1/transactions?page=1&recipientAccountNumber=4040-4040&senderAccountNumber=2020-2020&status=failed",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "recipientAccountNumber",
+							"value": "4040-4040"
+						},
+						{
+							"key": "senderAccountNumber",
+							"value": "2020-2020"
+						},
+						{
+							"key": "status",
+							"value": "failed"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[AUTH] get authorization data",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/api/v1/auth/protected/verify",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"protected",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[payment-manager-service] transfer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sender_account_id\": \"19bfc13a-5777-4026-a636-80d271ba00a8\",\n    \"recipient_account_number\": \"8080-8080\",\n    \"currency_code\": \"USD\",\n    \"amount\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5001/api/v1/payment/transfer",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"v1",
+						"payment",
+						"transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[payment-manager-service] transfer Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5001/api/v1/payment/withdraw/1c5a7ae2-9a67-4607-b94d-7e0d4d3873b3",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"v1",
+						"payment",
+						"withdraw",
+						"1c5a7ae2-9a67-4607-b94d-7e0d4d3873b3"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7IlVzZXJJRCI6ImQ0YzBjYzk4LTgzOGYtNGRjMy1hYTFkLTRjZTgzYjg5ZmYxMSIsIkVtYWlsIjoidXNlcjJAZXhhbXBsZS5jb20ifSwiZXhwIjoxNzE1NTA3MjE2fQ.K15HP5G_3zT5kUBlY4VnCVrzHfHiEBSbBjEOAmccQwM",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.request.headers.add({",
+					"    key: 'Content-Type', ",
+					"    value: 'application/json' })"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
