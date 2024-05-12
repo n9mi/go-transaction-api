@@ -38,7 +38,6 @@ func (ct *AuthController) SignIn(c *gin.Context) {
 	var request model.SignInRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(exception.NewHttpError(http.StatusBadRequest, "invalid request"))
-		return
 	}
 
 	response, err := ct.AuthService.SignIn(c.Request.Context(), &request)

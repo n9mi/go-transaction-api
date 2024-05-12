@@ -4,6 +4,7 @@ import (
 	"account-manager-service/database/migration"
 	"account-manager-service/database/seeder"
 	"account-manager-service/internal/delivery/http/controller"
+	"account-manager-service/internal/delivery/http/middleware"
 	"account-manager-service/internal/delivery/http/route"
 	"account-manager-service/internal/repository"
 	"account-manager-service/internal/service"
@@ -40,8 +41,15 @@ func Bootstrap(cfg *ConfigBootstrap) {
 		serviceSetup,
 	)
 
+	middlewareSetup := middleware.NewMiddlewareSetup(
+		cfg.ViperConfig,
+		cfg.RedisClient,
+		cfg.Log,
+	)
+
 	routeConfig := route.RouteConfig{
 		App:             cfg.App,
+		MiddlewareSetup: middlewareSetup,
 		ControllerSetup: controllerSetup,
 	}
 	routeConfig.Setup()

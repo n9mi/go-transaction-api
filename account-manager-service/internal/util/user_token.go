@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -100,4 +101,18 @@ func VerifyAccessToken(ctx context.Context, viperCfg *viper.Viper, redisClient *
 	}
 
 	return tokenData, nil
+}
+
+// Returns bearer token from given header string
+func ExtractBearerToken(header string) (string, error) {
+	if header == "" {
+		return "", exception.NewHttpError(http.StatusBadRequest, "missing authorization header")
+	}
+
+	bearerToken := strings.Split(header, " ")
+	if len(bearerToken) != 2 {
+		return "", exception.NewHttpError(http.StatusBadRequest, "incorrectly formatted authorization header")
+	}
+
+	return bearerToken[1], nil
 }

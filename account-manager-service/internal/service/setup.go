@@ -11,12 +11,14 @@ import (
 )
 
 type ServiceSetup struct {
-	AuthService AuthService
+	AuthService    AuthService
+	AccountService AccountService
 }
 
 func Setup(viperCfg *viper.Viper, validate *validator.Validate, db *gorm.DB, redisClient *redis.Client, log *logrus.Logger,
 	repositorySetup *repository.RepositorySetup) *ServiceSetup {
 	return &ServiceSetup{
-		AuthService: NewAuthService(viperCfg, validate, db, redisClient, log, repositorySetup.UserRepository),
+		AuthService:    NewAuthService(viperCfg, validate, db, redisClient, log, repositorySetup.UserRepository),
+		AccountService: NewAccountService(db, log, repositorySetup.UserRepository, repositorySetup.AccountRepository, repositorySetup.TransactionRepository),
 	}
 }

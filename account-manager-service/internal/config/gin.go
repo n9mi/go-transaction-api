@@ -53,8 +53,6 @@ func customErrorHandler() gin.HandlerFunc {
 				errorMessages = append(errorMessages, e.Error())
 			}
 
-			fmt.Print(httpCode, errorMessages)
-
 			c.JSON(httpCode, gin.H{
 				"messages": errorMessages,
 			})
