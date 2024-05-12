@@ -197,7 +197,7 @@ func (s *TransactionServiceImpl) Withdraw(ctx context.Context, request *model.Wi
 
 	if time.Now().Before(transaction.CreatedAt.Add(time.Second*30)) &&
 		transaction.Status == 1 && transaction.SucceedAt == nil {
-		transaction.Status = 3
+		transaction.Status = 2
 		timeNow := time.Now()
 		transaction.FailedAt = &timeNow
 
