@@ -15,7 +15,7 @@ type Transaction struct {
 	Currency   Currency `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	OriginalAmount float64
-	IDRAmount      float64
+	IDRAmount      float64 `gorm:"column:idr_amount"`
 
 	Status int8
 

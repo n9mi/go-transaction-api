@@ -16,6 +16,7 @@ type RouteConfig struct {
 func (c *RouteConfig) Setup() {
 	route := c.App.Group("/api/v1")
 	c.SetupAuthRoute(route)
+	c.SetupProtectedAuthRoute(route)
 	c.SetupAccountRoute(route)
 	c.SetupTransactionRoute(route)
 }
@@ -24,6 +25,12 @@ func (c *RouteConfig) SetupAuthRoute(route *gin.RouterGroup) {
 	authRoute := route.Group("/auth")
 	authRoute.POST("/sign-up", c.ControllerSetup.AuthController.SignUp)
 	authRoute.POST("/sign-in", c.ControllerSetup.AuthController.SignIn)
+}
+
+func (c *RouteConfig) SetupProtectedAuthRoute(route *gin.RouterGroup) {
+	accountRoute := route.Group("/auth/protected")
+	accountRoute.Use(c.MiddlewareSetup.AuthMiddleware)
+	accountRoute.POST("/verify", c.ControllerSetup.AuthController.RetrieveAuthData)
 }
 
 func (c *RouteConfig) SetupAccountRoute(route *gin.RouterGroup) {

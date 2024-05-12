@@ -91,13 +91,13 @@ func VerifyAccessToken(ctx context.Context, viperCfg *viper.Viper, redisClient *
 
 	tokenFromRedis, err := redisClient.Get(ctx, GetAccessTokenRedisKey(tokenData.UserID)).Result()
 	if err != nil {
-		log.Warnf("[%d] failed to get access token from redis with given key : %+v", http.StatusBadRequest, err)
-		return nil, exception.NewHttpError(http.StatusBadRequest, "invalid token")
+		log.Warnf("[%d] failed to get access token from redis with given key : %+v", http.StatusUnauthorized, err)
+		return nil, exception.NewHttpError(http.StatusUnauthorized, "unauthorized")
 	}
 
 	if tokenFromRedis != tokenFromRequest {
-		log.Warnf("[%d] invalid token from request", http.StatusBadRequest)
-		return nil, exception.NewHttpError(http.StatusBadRequest, "invalid token")
+		log.Warnf("[%d] invalid token from request", http.StatusUnauthorized)
+		return nil, exception.NewHttpError(http.StatusUnauthorized, "unauthorized")
 	}
 
 	return tokenData, nil

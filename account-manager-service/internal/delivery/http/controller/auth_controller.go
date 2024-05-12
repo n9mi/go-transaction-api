@@ -53,3 +53,14 @@ func (ct *AuthController) SignIn(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": response})
 }
+
+func (ct *AuthController) RetrieveAuthData(c *gin.Context) {
+	authData, ok := c.MustGet("authData").(model.AuthData)
+	if !ok {
+		c.Error(exception.NewHttpError(http.StatusForbidden, "invalid authorization data"))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": authData})
+}
