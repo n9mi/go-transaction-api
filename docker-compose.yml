@@ -13,43 +13,43 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-  account-manager-service:
-    container_name: account-manager-service
-    depends_on: 
-      - postgres-db
-    build: ./account-manager-service
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./account-manager-service:/usr/src/app
-    restart: always
-    command:
-      'go run ./cmd/web/main.go -b 0.0.0.0'
-    environment:
-      - SERVICE_DB_HOST=${DB_HOST}
-      - SERVICE_DB_NAME=${DB_NAME}
-      - SERVICE_DB_USER=${DB_USER}
-      - SERVICE_DB_PASSWORD=${DB_PASSWORD}
-      - SERVICE_DB_PORT=${DB_PORT}
-  payment-manager-service:
-    container_name: payment-manager-service
-    depends_on: 
-      - postgres-db
-      - account-manager-service
-    build: ./payment-manager-service
-    ports:
-      - "5050:5050"
-    volumes:
-      - ./payment-manager-service:/usr/src/app
-    restart: always
-    command:
-      'go run ./cmd/web/main.go -b 0.0.0.0'
-    environment:
-      - SERVICE_DB_HOST=${DB_HOST}
-      - SERVICE_DB_NAME=${DB_NAME}
-      - SERVICE_DB_USER=${DB_USER}
-      - SERVICE_DB_PASSWORD=${DB_PASSWORD}
-      - SERVICE_DB_PORT=${DB_PORT}
+  # account-manager-service:
+  #   container_name: account-manager-service
+  #   depends_on: 
+  #     - postgres-db
+  #   build: ./account-manager-service
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - ./account-manager-service:/usr/src/app
+  #   restart: always
+  #   command:
+  #     'go run ./cmd/web/main.go -b 0.0.0.0'
+  #   environment:
+  #     - SERVICE_DB_HOST=${DB_HOST}
+  #     - SERVICE_DB_NAME=${DB_NAME}
+  #     - SERVICE_DB_USER=${DB_USER}
+  #     - SERVICE_DB_PASSWORD=${DB_PASSWORD}
+  #     - SERVICE_DB_PORT=${DB_PORT}
+  # payment-manager-service:
+  #   container_name: payment-manager-service
+  #   depends_on: 
+  #     - postgres-db
+  #     - account-manager-service
+  #   build: ./payment-manager-service
+  #   ports:
+  #     - "5050:5050"
+  #   volumes:
+  #     - ./payment-manager-service:/usr/src/app
+  #   restart: always
+  #   command:
+  #     'go run ./cmd/web/main.go -b 0.0.0.0'
+  #   environment:
+  #     - SERVICE_DB_HOST=${DB_HOST}
+  #     - SERVICE_DB_NAME=${DB_NAME}
+  #     - SERVICE_DB_USER=${DB_USER}
+  #     - SERVICE_DB_PASSWORD=${DB_PASSWORD}
+  #     - SERVICE_DB_PORT=${DB_PORT}
   redis:
     image: redis:alpine
     ports:

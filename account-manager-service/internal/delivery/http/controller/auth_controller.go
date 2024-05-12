@@ -62,5 +62,5 @@ func (ct *AuthController) RetrieveAuthData(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": authData})
+	c.JSON(http.StatusOK, authData)
 }

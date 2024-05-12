@@ -44,3 +44,25 @@ func (ct *TransactionController) Transfer(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
+
+func (ct *TransactionController) Withdraw(c *gin.Context) {
+	authData, ok := c.MustGet("authData").(model.AuthData)
+	if !ok {
+		c.Error(exception.NewHttpError(http.StatusForbidden, "invalid authorization data"))
+		c.Abort()
+		return
+	}
+
+	request := &model.WithDrawRequest{
+		TransactionID: c.Param("transactionId"),
+		UserID:        authData.UserID,
+	}
+	data, err := ct.TransactionService.Withdraw(c.Request.Context(), request)
+	if err != nil {
+		c.Error(err)
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": data})
+}

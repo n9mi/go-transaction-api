@@ -120,7 +120,7 @@ func (s *TransactionServiceImpl) Transfer(ctx context.Context, request *model.Tr
 	}
 
 	// Set automatically succeed, if transaction hasn't been cancelled
-	time.AfterFunc(5*time.Second, func() {
+	time.AfterFunc(30*time.Second, func() {
 		tx := s.DB.Begin()
 
 		currTransaction := new(entity.Transaction)
@@ -157,5 +157,75 @@ func (s *TransactionServiceImpl) Transfer(ctx context.Context, request *model.Tr
 		Amount:                 transaction.OriginalAmount,
 		AmountInIDR:            transaction.IDRAmount,
 	}
+	return response, nil
+}
+
+func (s *TransactionServiceImpl) Withdraw(ctx context.Context, request *model.WithDrawRequest) (*model.WithdrawResponse, error) {
+	if err := s.Validate.Struct(request); err != nil {
+		s.Log.Warnf("[%d] invalid request body : %+v", http.StatusBadRequest, err)
+		return nil, err
+	}
+
+	tx := s.DB.WithContext(ctx).Begin()
+
+	transaction := new(entity.Transaction)
+	if err := s.TransactionRepository.Repository.FindById(tx, transaction, request.TransactionID); err != nil {
+		s.Log.Warnf("[%d] transaction not found : %+v", http.StatusNotFound, err)
+		return nil, exception.NewHttpError(http.StatusNotFound, "can't find transaction")
+	}
+
+	senderAccount := new(entity.Account)
+	senderAccount.ID = transaction.SenderAccountID
+	err := s.AccountRepository.FindByIDWithAccountType(tx, senderAccount)
+	if err != nil {
+		s.Log.Warnf("[%d] sender account not found : %+v", http.StatusNotFound, err)
+		return nil, exception.NewHttpError(http.StatusNotFound, "can't find sender account")
+	}
+
+	if request.UserID != senderAccount.UserID {
+		s.Log.Warnf("[%d] invalid sender account : %+v", http.StatusNotFound, err)
+		return nil, exception.NewHttpError(http.StatusNotFound, "can't find sender account")
+	}
+
+	response := new(model.WithdrawResponse)
+	// if transaction is made before current time + 30 second, and if transaction still pending
+	// and transaction hasn't been succeed yet, withdraw this transaction by setting status to 3 (FAILED/WITHDRAW)
+
+	fmt.Println("TIMENOW", time.Now().After(transaction.CreatedAt.Add(time.Second*30)))
+	fmt.Println(transaction.Status)
+	fmt.Println(transaction.SucceedAt)
+
+	if time.Now().Before(transaction.CreatedAt.Add(time.Second*30)) &&
+		transaction.Status == 1 && transaction.SucceedAt == nil {
+		transaction.Status = 3
+		timeNow := time.Now()
+		transaction.FailedAt = &timeNow
+
+		if err := s.TransactionRepository.Repository.Update(tx, transaction); err != nil {
+			if errRollback := tx.Rollback().Error; errRollback != nil {
+				s.Log.Warnf("[%d] %+v", http.StatusInternalServerError, errRollback)
+				return nil, exception.NewHttpError(http.StatusInternalServerError, "something wrong")
+			}
+
+			s.Log.Warnf("[%d] %+v", http.StatusInternalServerError, err)
+			return nil, exception.NewHttpError(http.StatusInternalServerError, "something wrong")
+		}
+
+		response = &model.WithdrawResponse{
+			TransactionID:  transaction.ID,
+			WithdrawStatus: "success",
+			WithdrawAt:     transaction.FailedAt,
+			TransferAt:     transaction.CreatedAt,
+			TransferStatus: "withdrawed",
+		}
+	} else {
+		response = &model.WithdrawResponse{
+			TransactionID:  transaction.ID,
+			WithdrawStatus: "failed",
+			TransferAt:     transaction.CreatedAt,
+			TransferStatus: "succeed",
+		}
+	}
+
 	return response, nil
 }

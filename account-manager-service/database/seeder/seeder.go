@@ -77,8 +77,9 @@ func seedAccountType(db *gorm.DB, accountTypeRepository *repository.AccountTypeR
 
 	for i, aN := range accountTypeNames {
 		newAccountType := entity.AccountType{
-			ID:   uuid.NewString(),
-			Name: aN,
+			ID:       uuid.NewString(),
+			Name:     aN,
+			LimitIDR: 1,
 		}
 		tx := db.Begin()
 		if err := accountTypeRepository.Repository.Create(tx, &newAccountType); err != nil {

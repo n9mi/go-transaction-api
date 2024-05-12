@@ -22,4 +22,5 @@ func (c *RouteConfig) SetupPaymentRoute(route *gin.RouterGroup) {
 	accountRoute := route.Group("/payment")
 	accountRoute.Use(c.MiddlewareSetup.AuthMiddleware)
 	accountRoute.POST("/transfer", c.ControllerSetup.TransactionController.Transfer)
+	accountRoute.POST("/withdraw/:transactionId", c.ControllerSetup.TransactionController.Withdraw)
 }
